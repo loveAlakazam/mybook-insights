@@ -1,9 +1,15 @@
 package mybook_insight.io.mybook_insight.domain.book;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import mybook_insight.io.mybook_insight.domain.common.BaseEntity;
+import mybook_insight.io.mybook_insight.domain.diary.Diary;
+import mybook_insight.io.mybook_insight.domain.user.User;
 
 @Entity
 @Table(name = "book")
@@ -27,9 +33,19 @@ public class Book extends BaseEntity {
     private int totalPages;
 
     @Column(name= "detail_contents")
-    private int detailContents;
+    private String detailContents;
 
     @Column(name= "thumbnail")
-    private int thumbnail;
+    private String thumbnail;
+
+    // 관계 매핑: Book - User (N:1) - 등록한 관리자
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registered_by", nullable = true, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @Setter
+    private User registeredBy;
+
+    // 관계 매핑: Book - Diary (1:N)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Diary> diaries = new ArrayList<>();
 
 }
