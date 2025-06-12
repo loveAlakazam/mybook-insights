@@ -2,7 +2,8 @@ package mybook_insight.io.mybook_insight.interfaces.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import mybook_insight.io.mybook_insight.domain.book.UserRole;
+import mybook_insight.io.mybook_insight.domain.user.UserLoginCommand;
+import mybook_insight.io.mybook_insight.domain.user.UserRole;
 import mybook_insight.io.mybook_insight.domain.user.UserService;
 
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,9 @@ public class UserController {
 	}
 	@PostMapping("/login")
 	public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
-		UserLoginResponse response = userService.login(request);
+		UserLoginResponse response = UserLoginResponse.of(
+			userService.login( UserLoginCommand.of( request.getEmail(), request.getRawPassword()) )
+	 	);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }

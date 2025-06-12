@@ -2,7 +2,6 @@ package mybook_insight.io.mybook_insight.domain.user;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import mybook_insight.io.mybook_insight.domain.book.UserRole;
 import mybook_insight.io.mybook_insight.domain.common.BusinessException;
 import mybook_insight.io.mybook_insight.domain.common.ErrorCodes;
 import mybook_insight.io.mybook_insight.interfaces.user.UserJoinRequest;
@@ -61,19 +60,19 @@ public class UserService {
 	}
 
     @Transactional
-    public UserLoginResponse login(UserLoginRequest request) {
+    public UserLoginInfo login(UserLoginCommand command) {
 		// 이메일로 사용자 조회
-		User user = userRepository.findByEmail(request.getEmail());
+		User user = userRepository.findByEmail(command.getEmail());
 		if(user == null) {
 			throw new BusinessException(ErrorCodes.USER_NOT_FOUND);
 		}
 
 		// 비밀번호 검증
-		if (!passwordEncoder.matches(request.getRawPassword(), user.getPassword())) {
+		if (!passwordEncoder.matches(command.getRawPassword(), user.getPassword())) {
 			throw new BusinessException(ErrorCodes.PASSWORD_MISMATCH);
 		}
 
-		return UserLoginResponse.from(user);
+		return UserLoginInfo.of(user);
 	}
 
     @Transactional

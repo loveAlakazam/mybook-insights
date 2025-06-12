@@ -3,7 +3,6 @@ package mybook_insight.io.mybook_insight.domain.user;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import mybook_insight.io.mybook_insight.domain.book.UserRole;
 import mybook_insight.io.mybook_insight.domain.common.BusinessException;
 import mybook_insight.io.mybook_insight.domain.common.ErrorCodes;
 import mybook_insight.io.mybook_insight.interfaces.user.UserJoinRequest;
@@ -148,7 +146,7 @@ public class UserServiceUnitTest {
 		String encodedPassword = SAMPLE_ENCODED_PASSWORD;
 		String nickname = "loginNickname";
 
-		UserLoginRequest loginRequest = new UserLoginRequest(email, rawPassword);
+		UserLoginRequest loginRequest = UserLoginRequest.of(email, rawPassword);
 		User mockUser = User.createForJoin(email, encodedPassword, nickname);
 
 		@Test
@@ -159,12 +157,14 @@ public class UserServiceUnitTest {
 			given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(true);
 
 			// when
-			UserLoginResponse response = userService.login(loginRequest);
+			UserLoginInfo userLoginInfo = userService.login(
+				UserLoginCommand.of( loginRequest.getEmail(), loginRequest.getRawPassword() )
+		  	);
 
 			// then
-			assertThat(response).isNotNull();
-			assertThat(response.getEmail()).isEqualTo(email);
-			assertThat(response.getNickname()).isEqualTo(nickname);
+			assertThat(userLoginInfo).isNotNull();
+			assertThat(userLoginInfo.getEmail()).isEqualTo(email);
+			assertThat(userLoginInfo.getNickname()).isEqualTo(nickname);
 
 			// verify
 			verify(userRepository).findByEmail(email);
@@ -178,9 +178,14 @@ public class UserServiceUnitTest {
 			given(userRepository.findByEmail(email)).willReturn(null);
 
 			// when & then
-			assertThatThrownBy(() -> userService.login(loginRequest))
-				.isInstanceOf(BusinessException.class)
-				.hasFieldOrPropertyWithValue("errorCode", ErrorCodes.USER_NOT_FOUND); // 또는 BusinessException 등 실제 구현에 맞게
+			assertThatThrownBy( () ->
+				userService.login(
+						UserLoginCommand.of( loginRequest.getEmail(), loginRequest.getRawPassword() )
+			 	))
+				.isInstanceOf( BusinessException.class )
+				.hasFieldOrPropertyWithValue( "errorCode", ErrorCodes.USER_NOT_FOUND )
+				.hasMessageContaining(ErrorCodes.USER_NOT_FOUND.getMessage()
+			 );
 		}
 
 		@Test
@@ -191,9 +196,11 @@ public class UserServiceUnitTest {
 			given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(false);
 
 			// when & then
-			assertThatThrownBy(() -> userService.login(loginRequest))
-				.isInstanceOf(BusinessException.class)
-				.hasFieldOrPropertyWithValue("errorCode", ErrorCodes.PASSWORD_MISMATCH);
+			assertThatThrownBy(() -> userService.login(
+					UserLoginCommand.of( loginRequest.getEmail(), loginRequest.getRawPassword() )
+		  	))
+			.isInstanceOf(BusinessException.class)
+			.hasFieldOrPropertyWithValue("errorCode", ErrorCodes.PASSWORD_MISMATCH);
 		}
 	}
 

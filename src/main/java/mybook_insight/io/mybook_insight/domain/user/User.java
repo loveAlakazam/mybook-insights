@@ -11,12 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import mybook_insight.io.mybook_insight.domain.book.Book;
-import mybook_insight.io.mybook_insight.domain.book.UserRole;
 import mybook_insight.io.mybook_insight.domain.common.BaseEntity;
-import mybook_insight.io.mybook_insight.domain.common.BusinessException;
-import mybook_insight.io.mybook_insight.domain.common.ErrorCodes;
 import mybook_insight.io.mybook_insight.domain.diary.Diary;
 
 @Entity

@@ -2,6 +2,7 @@ package mybook_insight.io.mybook_insight.interfaces;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import mybook_insight.io.mybook_insight.domain.user.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,12 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.jdbc.Sql;
 
-import mybook_insight.io.mybook_insight.domain.book.UserRole;
-import mybook_insight.io.mybook_insight.domain.user.User;
-import mybook_insight.io.mybook_insight.domain.user.UserRepository;
-import mybook_insight.io.mybook_insight.domain.user.UserService;
 import mybook_insight.io.mybook_insight.infrastructures.TestcontainersConfiguration;
 import mybook_insight.io.mybook_insight.interfaces.user.UserController;
 import mybook_insight.io.mybook_insight.interfaces.user.UserJoinRequest;
@@ -98,7 +94,7 @@ public class UserControllerE2ETest {
 	@DisplayName("로그인 성공")
 	void login_success() {
 		// 로그인 요청
-		UserLoginRequest loginRequest = new UserLoginRequest(
+		UserLoginRequest loginRequest = UserLoginRequest.of(
 			"user0@email.com",
 			"password0"
 		);

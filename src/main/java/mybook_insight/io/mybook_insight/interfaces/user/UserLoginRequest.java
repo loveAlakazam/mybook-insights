@@ -17,11 +17,18 @@ public class UserLoginRequest {
 	private String rawPassword;
 
 	@JsonCreator
-	public UserLoginRequest(
+	private UserLoginRequest(
 		@JsonProperty("email") String email,
 		@JsonProperty("password") String rawPassword
 	) {
 		this.email = email;
 		this.rawPassword = rawPassword;
+	}
+
+	public static UserLoginRequest of(
+		String email,
+		String rawPassword
+	) {
+		return new UserLoginRequest(email, rawPassword);
 	}
 }
