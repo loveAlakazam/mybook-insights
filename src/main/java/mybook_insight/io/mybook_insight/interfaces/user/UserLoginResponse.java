@@ -24,20 +24,7 @@ public class UserLoginResponse {
 	private String accessToken = "access-token"; // 액세스 토큰
 	private String refreshToken= "refresh-token"; // 리프래시 토큰
 
-	// 정적 팩토리 메서드
-	public static UserLoginResponse of(User user) {
-		return UserLoginResponse.builder()
-				.id(user.getId())
-				.email(user.getEmail())
-				.nickname(user.getNickname())
-				.role(user.getRole())
-				.createdAt(user.getCreatedAt())
-				.accessToken("access-token") // 실제 토큰 생성 로직 필요
-				.refreshToken("refresh-token") // 실제 토큰 생성 로직 필요
-				.build();
-	}
-
-	public static UserLoginResponse of(UserLoginInfo info) {
+	public static UserLoginResponse from(UserLoginInfo info) {
 		return UserLoginResponse.builder()
 				.id(info.getId())
 				.email(info.getEmail())

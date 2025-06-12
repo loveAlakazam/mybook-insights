@@ -6,7 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import mybook_insight.io.mybook_insight.domain.book.UserRole;
+import mybook_insight.io.mybook_insight.domain.user.UserJoinInfo;
+import mybook_insight.io.mybook_insight.domain.user.UserRole;
 import mybook_insight.io.mybook_insight.domain.user.User;
 
 @Getter
@@ -22,13 +23,13 @@ public class UserJoinResponse {
 
 
     // 정적팩터리 메서드
-    public static UserJoinResponse from(User user) {
+    public static UserJoinResponse from(UserJoinInfo userJoinInfo) {
         return UserJoinResponse.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .role(user.getRole())
-                .createdAt(user.getCreatedAt())
+                .id(userJoinInfo.getId())
+                .email(userJoinInfo.getEmail())
+                .nickname(userJoinInfo.getNickname())
+                .role(userJoinInfo.getRole())
+                .createdAt(userJoinInfo.getCreatedAt())
                 .build();
     }
 

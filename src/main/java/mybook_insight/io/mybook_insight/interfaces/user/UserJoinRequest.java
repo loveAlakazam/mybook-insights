@@ -20,7 +20,7 @@ public class UserJoinRequest {
 
     @NotBlank(message = "비밀번호는 필수입니다.")
     @Size(min = 8, max = 20, message = "비밀번호는 8자 이상 20자 이하여야 합니다.")
-    private String rawPassword;
+    private String password;
 
     @NotBlank(message = "닉네임은 필수입니다.")
     @Size(min = 2, max = 20, message = "닉네임은 2자 이상 20자 이하여야 합니다.")
@@ -30,14 +30,22 @@ public class UserJoinRequest {
     @JsonCreator
     public UserJoinRequest(
         @JsonProperty("email") String email,
-        @JsonProperty("password") String rawPassword,
+        @JsonProperty("password") String password,
         @JsonProperty("nickname") String nickname
     ) {
         this.email = email;
-        this.rawPassword = rawPassword;
+        this.password = password;
         this.nickname = nickname;
 
         validateBusinessRules();
+    }
+
+    public static UserJoinRequest of(
+        String email,
+        String rawPassword,
+        String nickname
+    ) {
+        return new UserJoinRequest(email, rawPassword, nickname);
     }
 
     public void validateBusinessRules() {
@@ -47,7 +55,7 @@ public class UserJoinRequest {
 
     private void validatePassword() {
         // 연속된 같은 문자 체크
-        if( hasConsecutiveSameChars(rawPassword) ) {
+        if( hasConsecutiveSameChars(password) ) {
             throw new InvalidDataValidationException(ErrorCodes.INVALID_CONSECUTIVE_PASSWORD);
         }
     }

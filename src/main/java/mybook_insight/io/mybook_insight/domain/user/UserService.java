@@ -4,10 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mybook_insight.io.mybook_insight.domain.common.BusinessException;
 import mybook_insight.io.mybook_insight.domain.common.ErrorCodes;
-import mybook_insight.io.mybook_insight.interfaces.user.UserJoinRequest;
 import mybook_insight.io.mybook_insight.interfaces.user.UserJoinResponse;
-import mybook_insight.io.mybook_insight.interfaces.user.UserLoginRequest;
-import mybook_insight.io.mybook_insight.interfaces.user.UserLoginResponse;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,32 +20,32 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserJoinResponse join(UserJoinRequest request) {
-        return join(request, UserRole.GENERAL);
+    public UserJoinInfo join(UserJoinCommand command) {
+        return join(command, UserRole.GENERAL);
     }
 
     @Transactional
-    public UserJoinResponse join(UserJoinRequest request, UserRole userRole) {
+    public UserJoinInfo join(UserJoinCommand command, UserRole userRole) {
 		// email 중복 체크
-		if( userRepository.existsByEmail(request.getEmail()) ) {
+		if( userRepository.existsByEmail(command.getEmail()) ) {
 			throw new BusinessException(ErrorCodes.EMAIL_ALREADY_EXISTS);
 		}
 
 		// 닉네임 중복체크
-		if(userRepository.existsByNickname(request.getNickname())) {
+		if(userRepository.existsByNickname(command.getNickname())) {
 			throw new BusinessException(ErrorCodes.DUPLICATE_NICKNAME);
 		}
 		// 비밀번호 암호화
-		String encodedPassword = passwordEncoder.encode(request.getRawPassword());
+		String encodedPassword = passwordEncoder.encode(command.getRawPassword());
 
 		// User 엔티티 생성
 		User user;
 		if(userRole == UserRole.ADMIN) {
 			// 관리자 계정 생성
-			user = User.createForAdmin(request.getEmail(), encodedPassword, request.getNickname());
+			user = User.createForAdmin(command.getEmail(), encodedPassword, command.getNickname());
 		} else {
 			// 일반 사용자 계정 생성
-			user = User.createForJoin(request.getEmail(),  encodedPassword, request.getNickname());
+			user = User.createForJoin(command.getEmail(),  encodedPassword, command.getNickname());
 		}
 
 		// 데이터베이스 저장
@@ -55,7 +53,7 @@ public class UserService {
 		log.info("{}회원 가입완료: userId: {}, email: {}", savedUser.getRole(), savedUser.getId(), savedUser.getEmail());
 
 		// 응답 DTO 반환
-		return UserJoinResponse.from(savedUser);
+		return UserJoinInfo.from(savedUser);
 
 	}
 

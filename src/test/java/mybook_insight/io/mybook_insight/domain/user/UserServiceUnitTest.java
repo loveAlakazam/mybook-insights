@@ -37,33 +37,33 @@ public class UserServiceUnitTest {
 		String email ="sample@mybook-insight.com";
 		String rawPassword = "samplePassword";
 		String nickname = "sampleNickname";
-		private final UserJoinRequest validRequest = new UserJoinRequest(email, rawPassword, nickname);
-		private final User mockGeneralUser = User.createForJoin(validRequest.getEmail(), SAMPLE_ENCODED_PASSWORD,
-			validRequest.getNickname());
+		private final UserJoinCommand validCommand = UserJoinCommand.of(email, rawPassword, nickname);
+		private final User mockGeneralUser = User.createForJoin(validCommand.getEmail(), SAMPLE_ENCODED_PASSWORD,
+			validCommand.getNickname());
 
 		@Test
 		@DisplayName("일반 유저 생성에 성공한다")
 		void joinGeneralUserSuccess() {
 			// given
-			given(userRepository.existsByEmail(validRequest.getEmail())).willReturn(false);
-			given(userRepository.existsByNickname(validRequest.getNickname())).willReturn(false);
-			given(passwordEncoder.encode(validRequest.getRawPassword())).willReturn(SAMPLE_ENCODED_PASSWORD);
+			given(userRepository.existsByEmail(validCommand.getEmail())).willReturn(false);
+			given(userRepository.existsByNickname(validCommand.getNickname())).willReturn(false);
+			given(passwordEncoder.encode(validCommand.getRawPassword())).willReturn(SAMPLE_ENCODED_PASSWORD);
 
 			given(userRepository.save(any(User.class))).willReturn(mockGeneralUser);
 
 			// when
-			UserJoinResponse response = userService.join(validRequest);
+			UserJoinInfo userJoinInfo = userService.join(validCommand);
 
 			// then
-			assertThat(response).isNotNull();
-			assertThat(response.getEmail()).isEqualTo(validRequest.getEmail());
-			assertThat(response.getNickname()).isEqualTo(validRequest.getNickname());
-			assertThat(response.getRole()).isEqualTo(UserRole.GENERAL);
+			assertThat(userJoinInfo).isNotNull();
+			assertThat(userJoinInfo.getEmail()).isEqualTo(validCommand.getEmail());
+			assertThat(userJoinInfo.getNickname()).isEqualTo(validCommand.getNickname());
+			assertThat(userJoinInfo.getRole()).isEqualTo(UserRole.GENERAL);
 
 			// verify
-			verify(userRepository).existsByEmail(validRequest.getEmail());
-			verify(userRepository).existsByNickname(validRequest.getNickname());
-			verify(passwordEncoder).encode(validRequest.getRawPassword());
+			verify(userRepository).existsByEmail(validCommand.getEmail());
+			verify(userRepository).existsByNickname(validCommand.getNickname());
+			verify(passwordEncoder).encode(validCommand.getRawPassword());
 			verify(userRepository).save(any(User.class));
 		}
 		@Test
@@ -72,13 +72,13 @@ public class UserServiceUnitTest {
 			// given
 			given(userRepository.existsByEmail(anyString())).willReturn(true);
 			// when & then
-			assertThatThrownBy(() -> userService.join(validRequest)).
+			assertThatThrownBy(() -> userService.join(validCommand)).
 				isInstanceOf(BusinessException.class)
 				.hasFieldOrPropertyWithValue("errorCode", ErrorCodes.EMAIL_ALREADY_EXISTS)
 				.hasMessageContaining(ErrorCodes.EMAIL_ALREADY_EXISTS.getMessage());
 
 			// verify
-			verify(userRepository).existsByEmail(validRequest.getEmail());
+			verify(userRepository).existsByEmail(validCommand.getEmail());
 			verify(userRepository, never()).existsByNickname(anyString());
 			verify(passwordEncoder, never()).encode(anyString());
 			verify(userRepository, never()).save(any(User.class));
@@ -91,14 +91,14 @@ public class UserServiceUnitTest {
 			given(userRepository.existsByNickname(anyString())).willReturn(true);
 
 			// when & then
-			assertThatThrownBy(() -> userService.join(validRequest)).
+			assertThatThrownBy(() -> userService.join(validCommand)).
 				isInstanceOf(BusinessException.class)
 				.hasFieldOrPropertyWithValue("errorCode", ErrorCodes.DUPLICATE_NICKNAME)
 				.hasMessageContaining(ErrorCodes.DUPLICATE_NICKNAME.getMessage());
 
 			// verify
-			verify(userRepository).existsByEmail(validRequest.getEmail());
-			verify(userRepository).existsByNickname(validRequest.getNickname());
+			verify(userRepository).existsByEmail(validCommand.getEmail());
+			verify(userRepository).existsByNickname(validCommand.getNickname());
 			verify(passwordEncoder, never()).encode(anyString());
 			verify(userRepository, never()).save(any(User.class));
 		}
@@ -109,32 +109,32 @@ public class UserServiceUnitTest {
 		String email ="sample@mybook-insight.com";
 		String rawPassword = "samplePassword";
 		String nickname = "sampleNickname";
-		private final UserJoinRequest validRequest = new UserJoinRequest(email, rawPassword, nickname);
-		private final User mockAdminUser = User.createForAdmin(validRequest.getEmail(), SAMPLE_ENCODED_PASSWORD,
-			validRequest.getNickname());
+		private final UserJoinCommand validCommand = UserJoinCommand.of(email, rawPassword, nickname);
+		private final User mockAdminUser = User.createForAdmin(validCommand.getEmail(), SAMPLE_ENCODED_PASSWORD,
+			validCommand.getNickname());
 
 		@Test
 		@DisplayName("관리자 유저 생성에 성공한다")
 		void joinAdminUserSuccess() {
 			// given
-			given(userRepository.existsByEmail(validRequest.getEmail())).willReturn(false);
-			given(userRepository.existsByNickname(validRequest.getNickname())).willReturn(false);
-			given(passwordEncoder.encode(validRequest.getRawPassword())).willReturn(SAMPLE_ENCODED_PASSWORD);
+			given(userRepository.existsByEmail(validCommand.getEmail())).willReturn(false);
+			given(userRepository.existsByNickname(validCommand.getNickname())).willReturn(false);
+			given(passwordEncoder.encode(validCommand.getRawPassword())).willReturn(SAMPLE_ENCODED_PASSWORD);
 			given(userRepository.save(any(User.class))).willReturn(mockAdminUser);
 
 			// when
-			UserJoinResponse response = userService.join(validRequest, UserRole.ADMIN);
+			UserJoinInfo userJoinInfo = userService.join(validCommand, UserRole.ADMIN);
 
 			// then
-			assertThat(response).isNotNull();
-			assertThat(response.getEmail()).isEqualTo(validRequest.getEmail());
-			assertThat(response.getNickname()).isEqualTo(validRequest.getNickname());
-			assertThat(response.getRole()).isEqualTo(UserRole.ADMIN);
+			assertThat(userJoinInfo).isNotNull();
+			assertThat(userJoinInfo.getEmail()).isEqualTo(validCommand.getEmail());
+			assertThat(userJoinInfo.getNickname()).isEqualTo(validCommand.getNickname());
+			assertThat(userJoinInfo.getRole()).isEqualTo(UserRole.ADMIN);
 
 			// verify
-			verify(userRepository).existsByEmail(validRequest.getEmail());
-			verify(userRepository).existsByNickname(validRequest.getNickname());
-			verify(passwordEncoder).encode(validRequest.getRawPassword());
+			verify(userRepository).existsByEmail(validCommand.getEmail());
+			verify(userRepository).existsByNickname(validCommand.getNickname());
+			verify(passwordEncoder).encode(validCommand.getRawPassword());
 			verify(userRepository).save(any(User.class));
 		}
 	}
