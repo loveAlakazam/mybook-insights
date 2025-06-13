@@ -1,4 +1,4 @@
-package mybook_insight.io.mybook_insight.domain.book;
+package mybook_insight.io.mybook_insight.domain.user;
 
 public enum UserRole {
     GENERAL("일반사용자"),   // 일반회원
