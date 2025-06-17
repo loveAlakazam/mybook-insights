@@ -49,26 +49,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "registeredBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Book> registeredBooks = new ArrayList<>();
 
-
-    // (일반회원) 기록 추가
-    public void addDiary(Diary diary) {
-        if( this.role == UserRole.GENERAL ) {
-            diaries.add(diary);
-        }
-        // throw Error - 로그인을 해주세요.
-        throw new BusinessException(ErrorCodes.ACCESS_DENIED);
-    }
-
-    // (관리자) 도서 추가
-    public void addBook(Book book) {
-        if( this.role == UserRole.ADMIN ) {
-            book.setRegisteredBy(this);
-            registeredBooks.add(book);
-        }
-        // throw Error - 관리자만 접근 가능합니다.
-        throw new IllegalStateException("관리자만 접근 가능합니다.");
-    }
-
     public void withdraw() {
         this.softDelete();
     }
