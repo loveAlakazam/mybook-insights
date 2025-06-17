@@ -4,12 +4,20 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCodes {
 	/* User */
-	EMAIL_ALREADY_EXISTS("이미 사용중인 이메일입니다.", 400),
-	NICKNAME_ALREADY_EXISTS("이미 사용중인 닉네임입니다.", 400),
+	// password
+	INVALID_CONSECUTIVE_PASSWORD("비밀번호에 같은 문자를 연속으로 사용할 수 없습니다.", 400),
+	PASSWORD_MISMATCH("비밀번호가 일치하지 않습니다.", 401),
+	// email
 	INVALID_EMAIL("유효하지 않은 이메일 형식입니다.", 400),
+	EMAIL_ALREADY_EXISTS("이미 사용중인 이메일입니다.", 409),
+	// nickname
 	INVALID_NICKNAME("유효하지 않은 닉네임 형식입니다.", 400),
-	INVALID_PASSWORD("비밀번호가 일치하지 않습니다.", 401),
+	FORBIDDEN_NICKNAME("금지된 단어가 포함된 닉네임 입니다.", 400),
+	DUPLICATE_NICKNAME("이미 사용중인 닉네임 입니다.", 409),
+
+
 	USER_NOT_FOUND("사용자를 찾을 수 없습니다.", 404),
+	NICKNAME_ALREADY_EXISTS("이미 사용중인 닉네임입니다.", 409),
 /* Book */
 /* Diary */
 	/* Common */
@@ -23,7 +31,9 @@ public enum ErrorCodes {
 	TOO_MANY_REQUESTS("요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", 429),
 	INTERNAL_SERVER_ERROR("서버 내부 오류가 발생했습니다.", 500),
 	UNEXPECTED_ERROR("예상치 못한 오류가 발생했습니다.", 500),
+	DATABASE_ERROR("데이터베이스 오류가 발생했습니다.", 500),
 	NOT_IMPLEMENTED("요청한 기능은 아직 구현되지 않았습니다.", 501),
+	SERVICE_UNAVAILABLE("서비스를 사용할 수 없습니다.", 503),
 	;
 
 

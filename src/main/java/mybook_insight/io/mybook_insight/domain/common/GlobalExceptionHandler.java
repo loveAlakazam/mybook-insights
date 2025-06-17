@@ -1,6 +1,8 @@
 package mybook_insight.io.mybook_insight.domain.common;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,6 +32,34 @@ public class GlobalExceptionHandler {
 			request.getRequestURI()
 		);
 		return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+	}
+
+	/**
+	 * Spring Validation 어노테이션 검증 실패 처리
+	 */
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
+		log.warn("Validation failed - message: {}", e.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse(
+			ErrorCodes.VALIDATION_ERROR.name(),
+			ErrorCodes.VALIDATION_ERROR.getMessage(),
+			request.getRequestURI()
+		);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+	/**
+	 * @PathVariable, @RequestParam 등에서 발생하는 바인딩 오류 처리
+	 */
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest request) {
+		log.warn("IllegalArgumentException - message: {}", e.getMessage(), e);
+		ErrorResponse errorResponse = new ErrorResponse(
+			e.getClass().getName(),
+			e.getMessage(),
+			request.getRequestURI()
+		);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
