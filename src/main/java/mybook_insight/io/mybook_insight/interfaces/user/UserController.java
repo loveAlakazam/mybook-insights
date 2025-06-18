@@ -29,4 +29,9 @@ public class UserController {
 		UserJoinResponse response = userService.join(request, UserRole.ADMIN);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	@PostMapping("/login")
+	public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
+		UserLoginResponse response = userService.login(request);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
 }
