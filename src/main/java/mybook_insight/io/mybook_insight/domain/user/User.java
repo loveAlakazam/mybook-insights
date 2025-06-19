@@ -3,6 +3,8 @@ package mybook_insight.io.mybook_insight.domain.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.SQLRestriction;
+
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,7 @@ import mybook_insight.io.mybook_insight.domain.diary.Diary;
 @NoArgsConstructor( access = AccessLevel.PROTECTED )
 @AllArgsConstructor( access = AccessLevel.PRIVATE )
 @Builder(access = AccessLevel.PRIVATE)
+@SQLRestriction( "deleted_at IS NULL")
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

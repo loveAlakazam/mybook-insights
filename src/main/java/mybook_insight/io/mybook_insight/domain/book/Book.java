@@ -3,6 +3,8 @@ package mybook_insight.io.mybook_insight.domain.book;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.SQLRestriction;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import mybook_insight.io.mybook_insight.domain.user.User;
 @Table(name = "book")
 @Getter
 @RequiredArgsConstructor
+@SQLRestriction( "deleted_at IS NULL")
 public class Book extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

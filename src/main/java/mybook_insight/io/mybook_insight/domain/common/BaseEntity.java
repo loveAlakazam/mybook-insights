@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @SQLDelete(sql = "UPDATE {h-schema}{h-table} SET deleted_at = NOW() WHERE id = ?")
-@SQLRestriction( "deleted_at IS NULL")
 public abstract class BaseEntity {
     @Column(name="created_at", nullable = false, updatable = false)
     @CreationTimestamp
