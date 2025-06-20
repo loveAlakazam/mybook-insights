@@ -18,6 +18,8 @@ import mybook_insight.io.mybook_insight.domain.common.BusinessException;
 import mybook_insight.io.mybook_insight.domain.common.ErrorCodes;
 import mybook_insight.io.mybook_insight.interfaces.user.UserJoinRequest;
 import mybook_insight.io.mybook_insight.interfaces.user.UserJoinResponse;
+import mybook_insight.io.mybook_insight.interfaces.user.UserLoginRequest;
+import mybook_insight.io.mybook_insight.interfaces.user.UserLoginResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceUnitTest {
@@ -136,6 +138,62 @@ public class UserServiceUnitTest {
 			verify(userRepository).existsByNickname(validRequest.getNickname());
 			verify(passwordEncoder).encode(validRequest.getRawPassword());
 			verify(userRepository).save(any(User.class));
+		}
+	}
+	@Nested
+	@DisplayName("로그인")
+	class UserLoginTest {
+		String email = "login@mybook-insight.com";
+		String rawPassword = "loginPassword";
+		String encodedPassword = SAMPLE_ENCODED_PASSWORD;
+		String nickname = "loginNickname";
+
+		UserLoginRequest loginRequest = new UserLoginRequest(email, rawPassword);
+		User mockUser = User.createForJoin(email, encodedPassword, nickname);
+
+		@Test
+		@DisplayName("로그인에 성공한다")
+		void loginSuccess() {
+			// given
+			given(userRepository.findByEmail(email)).willReturn(mockUser);
+			given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(true);
+
+			// when
+			UserLoginResponse response = userService.login(loginRequest);
+
+			// then
+			assertThat(response).isNotNull();
+			assertThat(response.getEmail()).isEqualTo(email);
+			assertThat(response.getNickname()).isEqualTo(nickname);
+
+			// verify
+			verify(userRepository).findByEmail(email);
+			verify(passwordEncoder).matches(rawPassword, encodedPassword);
+		}
+
+		@Test
+		@DisplayName("실패: 이메일이 존재하지 않으면 예외 발생")
+		void loginFailure_EmailNotFound() {
+			// given
+			given(userRepository.findByEmail(email)).willReturn(null);
+
+			// when & then
+			assertThatThrownBy(() -> userService.login(loginRequest))
+				.isInstanceOf(BusinessException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCodes.USER_NOT_FOUND); // 또는 BusinessException 등 실제 구현에 맞게
+		}
+
+		@Test
+		@DisplayName("실패: 비밀번호가 일치하지 않으면 예외 발생")
+		void loginFailure_PasswordMismatch() {
+			// given
+			given(userRepository.findByEmail(email)).willReturn(mockUser);
+			given(passwordEncoder.matches(rawPassword, encodedPassword)).willReturn(false);
+
+			// when & then
+			assertThatThrownBy(() -> userService.login(loginRequest))
+				.isInstanceOf(BusinessException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCodes.PASSWORD_MISMATCH);
 		}
 	}
 
