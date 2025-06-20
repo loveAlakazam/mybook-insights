@@ -7,6 +7,9 @@ import mybook_insight.io.mybook_insight.domain.common.BusinessException;
 import mybook_insight.io.mybook_insight.domain.common.ErrorCodes;
 import mybook_insight.io.mybook_insight.interfaces.user.UserJoinRequest;
 import mybook_insight.io.mybook_insight.interfaces.user.UserJoinResponse;
+import mybook_insight.io.mybook_insight.interfaces.user.UserLoginRequest;
+import mybook_insight.io.mybook_insight.interfaces.user.UserLoginResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,7 +61,20 @@ public class UserService {
 	}
 
     @Transactional
-    public void login() {}
+    public UserLoginResponse login(UserLoginRequest request) {
+		// 이메일로 사용자 조회
+		User user = userRepository.findByEmail(request.getEmail());
+		if(user == null) {
+			throw new BusinessException(ErrorCodes.USER_NOT_FOUND);
+		}
+
+		// 비밀번호 검증
+		if (!passwordEncoder.matches(request.getRawPassword(), user.getPassword())) {
+			throw new BusinessException(ErrorCodes.PASSWORD_MISMATCH);
+		}
+
+		return UserLoginResponse.from(user);
+	}
 
     @Transactional
     public void getProfile() {}
