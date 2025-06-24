@@ -5,18 +5,24 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import mybook_insight.io.mybook_insight.domain.book.Book;
 import mybook_insight.io.mybook_insight.domain.book.UserRole;
 import mybook_insight.io.mybook_insight.domain.common.BaseEntity;
+import mybook_insight.io.mybook_insight.domain.common.BusinessException;
+import mybook_insight.io.mybook_insight.domain.common.ErrorCodes;
 import mybook_insight.io.mybook_insight.domain.diary.Diary;
 
 @Entity
 @Table(name = "user")
-@Getter @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder( access = AccessLevel.PRIVATE )
+@Getter
+@NoArgsConstructor( access = AccessLevel.PROTECTED )
+@AllArgsConstructor( access = AccessLevel.PRIVATE )
+@Builder(access = AccessLevel.PRIVATE)
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +56,7 @@ public class User extends BaseEntity {
             diaries.add(diary);
         }
         // throw Error - 로그인을 해주세요.
-        throw new IllegalStateException("로그인을 해주세요.");
+        throw new BusinessException(ErrorCodes.ACCESS_DENIED);
     }
 
     // (관리자) 도서 추가
