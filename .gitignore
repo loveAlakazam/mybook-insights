@@ -1,0 +1,102 @@
+# Java 컴파일 결과물
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# Maven 빌드 디렉토리
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Gradle 빌드 디렉토리
+.gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# IntelliJ IDEA 설정 파일
+.idea
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# VS Code (혹시 사용할 경우)
+.vscode/
+
+# Eclipse (혹시 사용할 경우)
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+
+# 로그 파일
+logs/
+*.log
+log/
+
+# 데이터베이스 파일 (H2 등)
+*.db
+*.sqlite
+
+# 환경변수 파일
+.env
+.env.local
+.env.dev
+.env.prod
+
+# 데이터 디렉토리
+/data/
+/uploads/
+/temp/
+/storage/
+
+# MySQL 데이터 (Docker 사용 시)
+/mysql-data/
+/db-data/
+
+# OS별 시스템 파일
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Linux
+
+
+# 임시 파일
+*.tmp
+*.temp
+*.swp
+*.swo
+
+
+# 패키지 관리자
+node_modules/
+npm-debug.log*
+
+# 기타
+*.pid
+*.seed
+*.pid.lock
