@@ -1,0 +1,37 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  dotenv:
+    files: .env.dev
+
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:3306/${MYSQL_DATABASE}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 커넥션 풀 설정
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # 개발 서버에서는 스키마 자동 업데이트
+    show-sql: false
+
+logging:
+  level:
+    org.hibernate.SQL: INFO
+    io.mybook_insight: INFO
+  file:
+    name: logs/application-dev.log
+
+server:
+  port: 8080
+
+## 개발 서버용 외부 API
+#external:
+#  api:
+#    url: https://dev-api.yourcompany.com
+#    timeout: 10000

@@ -1,0 +1,51 @@
+# 로컬 개발환경
+spring:
+  config:
+    activate:
+      on-profile: local
+  dotenv:
+    files: .env.local
+  datasource:
+    url: jdbc:mysql://localhost:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 커넥션풀 설정(로컬용 - 가벼운설정)
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 300000
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # 앱 재시작시 테이블 재생성 모드
+    show-sql: true  # SQL 쿼리출력
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true # SQL 포맷팅
+        use_sql_comments: true # SQL 주석 출력
+#  # SQL 초기화
+#  sql:
+#    init:
+#      mode: always # 항상 초기 데이터 스크립트 실행
+#      schema-locations: classpath:schema-local.sql # 스키마 생성 스크립트
+#      data-locations: classpath:data-local.sql # 초기 데이터 스크립트
+
+
+# 로깅 설정
+logging:
+  level:
+    org.hibernate.SQL: DEBUG # SQL 쿼리 로그
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE # 파라미터 바인딩 로그
+    io.mybook_insight: DEBUG # 애플리케이션 로그
+    org.springframework.web: DEBUG # 웹 요청/응답 로그
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /api
+

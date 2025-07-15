@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: my-book-insight
+  profiles:
+    active: local # 기본 프로필을 로컬로 설정
