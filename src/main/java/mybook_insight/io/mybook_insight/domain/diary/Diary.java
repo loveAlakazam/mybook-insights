@@ -40,5 +40,4 @@ public class Diary extends BaseEntity {
     @Setter
     private Book book;
 
-
 }
